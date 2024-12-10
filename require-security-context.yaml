@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-security-context
+spec:
+  rules:
+  - name: require-security-context
+    match:
+      resources:
+        - deployment
+        - pod
+        - replicaset
+      namespaces:
+        - "*"
+    validate:
+      message: "Security context must be set"
+      pattern: "{{ .spec.template.spec.containers[*].securityContext }}"
+      op: NotEqual
+      value: {}

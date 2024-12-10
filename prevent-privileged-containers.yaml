@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: prevent-privileged-containers
+spec:
+  rules:
+  - name: prevent-privileged-containers
+    match:
+      resources:
+        - deployment
+        - pod
+        - replicaset
+      namespaces:
+        - "*"
+    validate:
+      message: "privileged mode is not allowed"
+      pattern: "{{ .spec.template.spec.containers[*].securityContext.privileged }}"
+      op: NotEqual
+      value: true

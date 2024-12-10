@@ -1,0 +1,19 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-image-pull-policy
+spec:
+  rules:
+  - name: require-image-pull-policy
+    match:
+      resources:
+        - deployment
+        - pod
+        - replicaset
+      namespaces:
+        - "*"
+    validate:
+      message: "ImagePullPolicy must be set to Always or Never"
+      pattern: "{{ .spec.template.spec.containers[*].imagePullPolicy }}"
+      op: NotEqual
+      value: ""
